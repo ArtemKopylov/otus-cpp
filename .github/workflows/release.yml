@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+        CTEST_OUTPUT_ON_FAILURE : 1
     steps:
       - uses: actions/checkout@v2
         with:
