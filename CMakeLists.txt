@@ -6,14 +6,16 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 project(helloworld VERSION ${PROJECT_VESRION})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(GTest)
 
 configure_file(version.h.in version.h)
 
 add_executable(helloworld_cli main.cpp)
 add_library(helloworld lib.cpp)
 add_executable(test_version test_version.cpp)
+add_executable(g_test_version gtest_version.cpp)
 
-set_target_properties(helloworld_cli helloworld test_version PROPERTIES
+set_target_properties(helloworld_cli helloworld test_version g_test_version PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED ON
 )
@@ -31,6 +33,14 @@ target_link_libraries(helloworld_cli PRIVATE
 target_link_libraries(test_version
     ${Boost_LIBRARIES}
     helloworld
+)
+
+target_link_libraries(
+  g_test_version
+  gtest_main
+  gtest
+  pthread
+  helloworld
 )
 
 if (MSVC)
@@ -72,3 +82,6 @@ include(CPack)
 enable_testing()
 
 add_test(test_version test_version "-- " ${PATCH_VERSION})
+
+include(GoogleTest)
+gtest_discover_tests(g_test_version EXTRA_ARGS  --${PATCH_VERSION})
